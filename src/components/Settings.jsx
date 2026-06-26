@@ -26,21 +26,30 @@ export default function Settings({ onClose, onSaved }) {
           </button>
         </div>
         <p className="mb-4 text-sm text-white/50">
-          Paste your Anthropic API key to power the AI features (discovery, outreach,
-          profile fit, leads). It's stored only on this device and sent straight to
-          Claude — never to any other server.
+          Paste your <span className="text-gold">free</span> Google Gemini API key to power the AI
+          features (discovery, outreach, profile fit, leads). It's stored only on this device and
+          sent straight to Google — never to any other server.
         </p>
 
-        <label className="ds-label">Anthropic API key</label>
+        <label className="ds-label">Gemini API key (free)</label>
         <input
           className="ds-input font-mono"
           type="password"
-          placeholder="sk-ant-..."
+          placeholder="AIza..."
           value={val}
           onChange={(e) => setVal(e.target.value)}
         />
         <p className="mt-2 text-[11px] text-white/35">
-          Get one at console.anthropic.com → API Keys. The Rate Card works without a key.
+          Get one free (no credit card) at{" "}
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            rel="noreferrer"
+            className="text-gold underline"
+          >
+            aistudio.google.com/app/apikey
+          </a>{" "}
+          → Create API key. The Rate Card works without a key.
         </p>
 
         <div className="mt-5 flex justify-end gap-2">

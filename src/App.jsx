@@ -32,7 +32,7 @@ export default function App() {
           onClick={() => setShowSettings(true)}
           className="block w-full border-b border-gold/30 bg-gold/10 px-4 py-2 text-center text-xs text-goldsoft hover:bg-gold/15"
         >
-          ⚠ No Anthropic API key yet — AI features are off. Click here to add your key (the Rate Card works without one).
+          ⚠ No API key yet — AI features are off. Click here to add your FREE Gemini key (the Rate Card works without one).
         </button>
       )}
 
