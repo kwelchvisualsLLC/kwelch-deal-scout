@@ -1,35 +1,36 @@
 # KWelch Deal Scout
 
-A brand-partnership discovery & outreach tool built for **KWelchVisuals** (Keith Welch Jr.).
-React + Vite frontend, Node/Express backend, Anthropic **claude-sonnet-4-6** for the AI features.
-Black / gold (#D4AF37) / white only.
+A brand-partnership discovery & outreach tool for **KWelchVisuals** (Keith Welch Jr.).
+React + Vite, styled black / gold (#D4AF37) / white. AI runs on Anthropic **claude-sonnet-4-6**.
+
+**Live:** https://kwelchvisualsllc.github.io/kwelch-deal-scout/
+
+## How it works
+It's a **pure static app** — the AI calls go straight from your browser to the Anthropic API
+using a key you paste into **Settings** (stored only on your device, in localStorage). No backend
+server needed, which is why it can live on free GitHub Pages. Add your key once (⚙ top-right) and
+the AI features turn on. The **Rate Card** works with no key at all.
 
 ## Features
-1. **Profile Analyzer** — pull IG stats → Claude maps content pillars, audience & brand-fit categories.
-2. **Deal Discovery Engine** — pick categories + deal params → 15–20 realistic brand targets with heat scores.
-3. **Outreach Generator** — per-brand cold DM + email + subject line in Keith's voice, editable & copyable.
-4. **Pipeline Tracker** — drag-and-drop Kanban (Discovered → Contacted → Negotiation → Closed → Passed), saved to localStorage.
+1. **Profile Analyzer** — stats → content pillars, audience & ranked brand-fit categories.
+2. **Deal Discovery Engine** — categories + deal params → 15–20 brand targets with heat scores.
+3. **Outreach Generator** — per-brand cold DM + email + subject in Keith's voice, editable & copyable.
+4. **Pipeline Tracker** — drag-and-drop Kanban, saved to localStorage.
 5. **Fresh Leads Feed** — 10 AI-sourced brands plausibly running campaigns now.
-6. **Rate Card Generator** — auto-priced from reach, copyable.
+6. **Rate Card Generator** — auto-priced from reach, copyable (no key required).
 
-## Setup
+## Run locally
 ```bash
 npm install
-cp .env.example .env          # then paste your ANTHROPIC_API_KEY
-npm run dev                   # backend :8787 + frontend :5174
+npm run web        # http://localhost:5174
 ```
-Open **http://localhost:5174**.
 
-- Get an API key at https://console.anthropic.com → API Keys.
-- **Instagram stats:** the app uses Keith's known stats out of the box. To pull *live* stats,
-  subscribe to a RapidAPI Instagram scraper and set `RAPIDAPI_KEY` / `RAPIDAPI_HOST` in `.env`.
-
-## Production
+## Deploy an update
 ```bash
-npm run build      # emits dist/
-npm start          # Express serves the API + the built app on :8787
+bash deploy.sh     # builds + pushes to GitHub Pages, ~30-60s to go live
 ```
 
 ## Notes
-- The Anthropic key lives only in `server/.env` and is never exposed to the browser — all AI calls go through the backend.
-- AI responses are parsed as JSON server-side with a tolerant extractor, so the UI always gets clean data.
+- Your Anthropic key never leaves your browser except to call Claude directly. Get one at
+  console.anthropic.com → API Keys.
+- `server/` contains an optional Express backend version (not used by the live static build).
