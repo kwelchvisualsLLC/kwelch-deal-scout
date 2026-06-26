@@ -13,6 +13,23 @@ export function setKey(k) {
   else localStorage.removeItem(KEY_STORE);
 }
 
+// One-tap install: opening the app with ?key=YOUR_KEY auto-saves the key to this
+// device, then strips it from the address bar so it isn't left sitting in the URL.
+(function installKeyFromUrl() {
+  try {
+    const p = new URLSearchParams(location.search);
+    const k = p.get("key");
+    if (k && k.trim()) {
+      localStorage.setItem(KEY_STORE, k.trim());
+      p.delete("key");
+      const q = p.toString();
+      history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash);
+    }
+  } catch {
+    /* ignore */
+  }
+})();
+
 const SYSTEM = `You are a brand partnership strategist specializing in creator economy deals for visual content creators. The creator is Keith Welch Jr. of KWelchVisuals — a professional photographer/videographer based in Fairfield, CA (serving Northern California, the Bay Area, Sacramento, and Napa Valley) with 120k+ Instagram followers (@kwelchvisuals), 50k+ YouTube subscribers, embedded access to Bay Area sports, music, and culture, multiple viral videos, and press placements in The Fader, XXL, and the New York Times. He shoots sports, music, culture, real estate, brands, and events, and is also a licensed real estate agent. Optimize all recommendations for high-ticket deals ($1,000+), recurring retainers, and brand categories that align with visual storytelling. Be specific and realistic — name real, plausible brands and real campaign types. Never invent fake statistics about the brands. Always respond with ONLY a single valid JSON object matching the shape the user describes — no markdown, no prose.`;
 
 function extractJson(text) {
