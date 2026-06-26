@@ -1,0 +1,31 @@
+{
+  "name": "kwelch-deal-scout",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Brand partnership discovery & outreach tool for KWelchVisuals",
+  "scripts": {
+    "dev": "concurrently -k -n SERVER,WEB -c yellow,cyan \"npm:server\" \"npm:web\"",
+    "server": "node server/index.js",
+    "web": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.7"
+  }
+}

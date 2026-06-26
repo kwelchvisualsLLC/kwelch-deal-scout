@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(212, 175, 55, 0.08), transparent 60%),
+    #000;
+  color: #fff;
+  font-family: "Space Grotesk", Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #d4af37;
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.25);
+  border-radius: 20px;
+}
+
+@layer components {
+  .ds-card {
+    @apply rounded-xl border border-line bg-panel relative overflow-hidden;
+  }
+  /* gold left accent stripe on cards */
+  .ds-card::before {
+    content: "";
+    @apply absolute left-0 top-0 bottom-0 w-[3px] bg-gold/70;
+  }
+  .ds-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-goldsoft disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .ds-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-panel2 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-gold/60;
+  }
+  .ds-input {
+    @apply w-full rounded-lg border border-line bg-panel2 px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-gold placeholder:text-white/30;
+  }
+  .ds-label {
+    @apply mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-white/50;
+  }
+  .ds-chip {
+    @apply cursor-pointer select-none rounded-full border px-3 py-1.5 text-xs font-semibold transition;
+  }
+}
