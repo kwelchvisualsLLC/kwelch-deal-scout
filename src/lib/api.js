@@ -37,7 +37,7 @@ function extractJson(text) {
   }
 }
 
-async function ask(userText, maxTokens = 4000) {
+async function ask(userText, maxTokens = 3000) {
   const key = getKey();
   if (!key) {
     const e = new Error("Add your free Gemini API key in Settings to enable AI features.");
@@ -45,40 +45,52 @@ async function ask(userText, maxTokens = 4000) {
     throw e;
   }
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${encodeURIComponent(key)}`;
-  let res;
-  try {
-    res = await fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM }] },
-        contents: [{ role: "user", parts: [{ text: userText }] }],
-        generationConfig: {
-          maxOutputTokens: maxTokens,
-          temperature: 1,
-          responseMimeType: "application/json",
-        },
-      }),
-    });
-  } catch {
-    throw new Error("Network error reaching the AI. Check your connection.");
-  }
-  if (!res.ok) {
-    let msg = `AI error (${res.status})`;
+  const payload = JSON.stringify({
+    system_instruction: { parts: [{ text: SYSTEM }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: { maxOutputTokens: maxTokens, temperature: 1, responseMimeType: "application/json" },
+  });
+
+  // Up to 2 attempts: auto-retry once on a short per-minute rate limit.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    let res;
     try {
-      const j = await res.json();
-      msg = j?.error?.message || msg;
+      res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: payload });
+    } catch {
+      throw new Error("Network error reaching the AI. Check your connection.");
+    }
+    if (res.ok) {
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
+      if (!text) throw new Error("The AI returned no content. Try again.");
+      return text;
+    }
+
+    let body = {};
+    try {
+      body = await res.json();
     } catch {
       /* ignore */
     }
-    if (res.status === 400 && /api key/i.test(msg)) msg = "Invalid Gemini API key. Check it in Settings.";
-    if (res.status === 429) msg = "Free-tier rate limit hit — wait a moment and try again.";
+    const msg = body?.error?.message || `AI error (${res.status})`;
+
+    if (res.status === 429) {
+      const details = body?.error?.details || [];
+      const ri = details.find((d) => (d["@type"] || "").includes("RetryInfo"));
+      const secs = ri?.retryDelay ? parseInt(ri.retryDelay, 10) || 0 : 0;
+      // Short per-minute throttle → wait it out once and retry transparently.
+      if (attempt === 0 && secs > 0 && secs <= 25) {
+        await new Promise((r) => setTimeout(r, (secs + 1) * 1000));
+        continue;
+      }
+      throw new Error(
+        "Gemini free-tier limit reached for now. It refreshes each minute; the daily cap resets around midnight Pacific. Give it a moment and try again."
+      );
+    }
+    if (res.status === 400 && /api key|API_KEY/i.test(msg)) throw new Error("Invalid Gemini API key — re-check it in Settings.");
     throw new Error(msg);
   }
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
-  if (!text) throw new Error("The AI returned no content. Try again.");
-  return text;
+  throw new Error("Rate limited — please try again shortly.");
 }
 
 const askJson = async (text, max) => extractJson(await ask(text, max));
@@ -130,13 +142,13 @@ Return ONLY a JSON object with this exact shape:
   "audience": { "demographics": "1 sentence", "geography": "1 sentence", "psychographics": "1 sentence" },
   "fitCategories": [ { "name": "category", "why": "1 sentence", "strength": 1-100 } ]
 }
-pillars = 4-6 items. fitCategories = 8-10 items sorted strongest first.`,
-    3000
+pillars = 4-6 items. fitCategories = 8 items sorted strongest first. Keep every string tight.`,
+    1800
   );
 
 const discover = ({ categories, minDeal, dealType, geography }) =>
   askJson(
-    `Generate a list of 15-20 SPECIFIC, REAL, plausible brand targets for paid partnerships.
+    `Generate a list of 14 SPECIFIC, REAL, plausible brand targets for paid partnerships.
 
 Content categories: ${categories.join(", ") || "any"}
 Minimum deal value: ${minDeal}
@@ -146,8 +158,8 @@ Geography filter: ${geography}
 heatScore 1-100 = how likely they actually work with a ~120k IG creator in this niche (huge global brands score lower; regional/challenger/local score higher). Respect geography (Local = NorCal/Bay Area; National = national; Both = mix). Bias toward brands that pay $1,000+, run creator campaigns, and fit visual storytelling.
 
 Return ONLY a JSON object:
-{ "brands": [ { "name": "", "category": "", "why": "1-2 sentences", "dealRange": "$X,XXX - $X,XXX", "contentType": "", "heatScore": 1-100, "local": true } ] }`,
-    8000
+{ "brands": [ { "name": "", "category": "", "why": "1 tight sentence", "dealRange": "$X,XXX - $X,XXX", "contentType": "short phrase", "heatScore": 1-100, "local": true } ] }`,
+    5000
   );
 
 const leads = ({ category }) =>
@@ -158,7 +170,7 @@ For submitWhere give a realistic channel (brand ambassador page, a creator platf
 
 Return ONLY a JSON object:
 { "leads": [ { "brand": "", "campaignType": "", "budgetRange": "$X,XXX - $X,XXX", "submitWhere": "", "urgent": true } ] }`,
-    4000
+    2500
   );
 
 const outreach = ({ brand, category, dealType, note }) =>
@@ -191,7 +203,7 @@ Return ONLY a JSON object with this exact shape:
   "email": "professional cold email 120-180 words, soft mention a full rate card is available on request, ending with: Keith Welch Jr. — KWelchVisuals — @kwelchvisuals",
   "followUp": "one short follow-up timing tip"
 }`,
-    3500
+    2600
   );
 
 export const api = {
