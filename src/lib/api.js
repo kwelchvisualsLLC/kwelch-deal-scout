@@ -163,18 +163,35 @@ Return ONLY a JSON object:
 
 const outreach = ({ brand, category, dealType, note }) =>
   askJson(
-    `Write cold outreach from Keith Welch Jr. (KWelchVisuals) to ${brand} for a paid partnership.
+    `Build a COMPLETE outreach plan from Keith Welch Jr. (KWelchVisuals) to ${brand} for a paid partnership.
 
 Brand: ${brand}
 Category: ${category || "(unspecified)"}
 Deal type to pitch: ${dealType || "a content partnership"}
 Angle from Keith: ${note || "(none)"}
 
-Voice: direct, confident, Bay-Area-rooted, no corporate fluff, energy without exaggeration. Reference KWelchVisuals, the Bay Area sports/music/culture/real-estate niche, 120k IG / 50k YT, and the press (The Fader, XXL, NYT) naturally — never a brag dump. Make the value to THE BRAND the point.
+Do THREE things:
 
-Return ONLY a JSON object:
-{ "subject": "subject under 60 chars", "dm": "IG DM under 300 chars", "email": "professional cold email 120-180 words, soft mention a full rate card is available on request, ending with: Keith Welch Jr. — KWelchVisuals — @kwelchvisuals" }`,
-    2000
+1) BEST CHANNEL — Pick the single best FIRST-contact channel for THIS brand specifically (one of: Instagram DM, Email, LinkedIn, Creator platform, Contact form) and explain in 1-2 sentences why it's the strongest way in for a brand of this type/size. Give a 1-100 confidence that this channel reaches a decision-maker.
+
+2) CONTACT INTELLIGENCE — Provide realistic ways to actually reach them: the brand's official Instagram handle if you know it; the MOST LIKELY partnership/marketing email pattern (e.g. partnerships@brand.com, marketing@brand.com) clearly flagged as a pattern to verify; their likely contact / creator-submission page path; and a LinkedIn search to find the right marketing/brand/partnerships person. NEVER present a guessed personal email as confirmed — set "verify": true on anything you are not certain about. Order contacts best-first.
+
+3) THE OUTREACH — Write it in Keith's voice (direct, confident, Bay-Area-rooted, no corporate fluff; reference KWelchVisuals, the Bay Area sports/music/culture/real-estate niche, 120k IG / 50k YT, and press The Fader/XXL/NYT naturally; value to THE BRAND is the point). Tailor the opening to the chosen best channel. Include a short follow-up timing tip.
+
+Return ONLY a JSON object with this exact shape:
+{
+  "bestChannel": "Instagram DM | Email | LinkedIn | Creator platform | Contact form",
+  "channelWhy": "1-2 sentences",
+  "channelConfidence": 1-100,
+  "contacts": [
+    { "type": "Instagram | Email | LinkedIn | Website | Platform", "value": "the handle / email / url / search string", "note": "short context", "verify": true }
+  ],
+  "subject": "email subject under 60 chars",
+  "dm": "Instagram DM under 300 chars",
+  "email": "professional cold email 120-180 words, soft mention a full rate card is available on request, ending with: Keith Welch Jr. — KWelchVisuals — @kwelchvisuals",
+  "followUp": "one short follow-up timing tip"
+}`,
+    3500
   );
 
 export const api = {
