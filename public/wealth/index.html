@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>KWelch Wealth Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23000'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia' font-size='24' font-weight='bold' fill='%23D4AF37'%3EKW%3C/text%3E%3C/svg%3E" />
+<style>
+  :root { --gold:#D4AF37; --goldsoft:#E9CC73; --panel:#0c0c0c; --panel2:#141414; --line:#262626; --green:#27AE60; --red:#E74C3C; --amber:#F39C12; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body { background:#000; color:#fff; font-family:"Space Grotesk",system-ui,sans-serif; padding-bottom:110px; }
+  .display { font-family:"Bebas Neue",Impact,sans-serif; letter-spacing:.5px; }
+  header { position:sticky; top:0; z-index:20; background:rgba(0,0,0,.88); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:14px 16px 0; }
+  .brand { display:flex; align-items:baseline; gap:8px; }
+  .brand .g { color:var(--gold); font-size:30px; } .brand .w { color:#fff; font-size:30px; }
+  .applinks { font-size:11px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+  .applinks a { color:rgba(255,255,255,.55); text-decoration:none; } .applinks a:active { color:var(--gold); }
+  .applinks .here { color:var(--gold); }
+  nav { display:flex; gap:4px; overflow-x:auto; margin-top:10px; }
+  nav button { background:none; border:none; color:rgba(255,255,255,.5); font:600 14px "Space Grotesk"; padding:10px 14px; border-radius:10px 10px 0 0; white-space:nowrap; }
+  nav button.on { color:var(--gold); background:var(--panel); box-shadow:inset 0 -2px 0 0 var(--gold); }
+  main { max-width:720px; margin:0 auto; padding:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .card.gold { border-color:rgba(212,175,55,.45); box-shadow:0 0 0 1px rgba(212,175,55,.2), 0 10px 40px -12px rgba(212,175,55,.25); }
+  .label { font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:rgba(255,255,255,.45); }
+  .big { font-size:34px; } .gold-t { color:var(--gold); }
+  .row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .row:last-child { border-bottom:none; }
+  .up { color:var(--green); } .down { color:var(--red); }
+  button.btn { background:var(--gold); color:#000; border:none; border-radius:10px; padding:12px 16px; font:700 15px "Space Grotesk"; width:100%; }
+  button.btn2 { background:var(--panel2); color:var(--gold); border:1px solid rgba(212,175,55,.5); border-radius:10px; padding:11px 14px; font:600 14px "Space Grotesk"; }
+  button.btn3 { background:none; color:rgba(255,255,255,.55); border:1px solid var(--line); border-radius:10px; padding:9px 12px; font:600 13px "Space Grotesk"; }
+  input, select { background:var(--panel2); color:#fff; border:1px solid var(--line); border-radius:10px; padding:12px; font:500 15px "Space Grotesk"; width:100%; }
+  input:focus, select:focus { outline:none; border-color:rgba(212,175,55,.6); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .bar { height:10px; background:var(--panel2); border-radius:6px; overflow:hidden; }
+  .bar > div { height:100%; background:linear-gradient(90deg, rgba(212,175,55,.55), var(--gold)); border-radius:6px; }
+  .chip { display:inline-block; background:var(--panel2); border:1px solid var(--line); color:rgba(255,255,255,.7); border-radius:999px; padding:6px 12px; font-size:13px; margin:0 6px 6px 0; }
+  .hint { font-size:12.5px; color:rgba(255,255,255,.45); line-height:1.5; }
+  .del { color:var(--red); background:none; border:none; font-size:18px; padding:6px; }
+  /* Floating AI button */
+  #aiFab { position:fixed; right:18px; bottom:24px; z-index:40; width:64px; height:64px; border-radius:50%; border:none;
+    background:radial-gradient(circle at 30% 30%, var(--goldsoft), var(--gold)); color:#000; font:700 20px "Bebas Neue";
+    box-shadow:0 6px 24px rgba(212,175,55,.45); }
+  /* AI sheet */
+  #aiSheet { position:fixed; inset:0; z-index:50; display:none; flex-direction:column; background:rgba(0,0,0,.96); }
+  #aiSheet.open { display:flex; }
+  #aiHead { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line); }
+  #aiMsgs { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .m { max-width:88%; padding:11px 14px; border-radius:14px; font-size:15px; line-height:1.5; white-space:pre-wrap; }
+  .m.u { align-self:flex-end; background:rgba(212,175,55,.16); border:1px solid rgba(212,175,55,.3); }
+  .m.a { align-self:flex-start; background:var(--panel); border:1px solid var(--line); }
+  #aiBar { padding:10px 12px calc(14px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); }
+  #aiChips { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; }
+  #aiChips button { white-space:nowrap; background:var(--panel2); border:1px solid var(--line); color:rgba(255,255,255,.65); border-radius:999px; padding:7px 12px; font-size:13px; }
+  #aiRow { display:flex; gap:8px; }
+  #aiIn { flex:1; }
+  #aiSend { background:var(--gold); border:none; border-radius:10px; width:52px; font:700 16px "Space Grotesk"; color:#000; }
+  .modal { position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.85); display:none; align-items:flex-end; }
+  .modal.open { display:flex; }
+  .modal .inner { background:var(--panel); border-top:1px solid var(--line); border-radius:18px 18px 0 0; width:100%; max-width:720px; margin:0 auto; padding:18px 16px calc(20px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:10px; max-height:85vh; overflow-y:auto; }
+  .footnote { text-align:center; font-size:11px; color:rgba(255,255,255,.35); padding:16px; line-height:1.5; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand display"><span class="g">KWELCH</span><span class="w">WEALTH AGENT</span></div>
+  <div class="applinks">Apps: <a href="../">Deal Scout</a> · <span class="here">Wealth</span> · <a href="../tax/">Tax</a></div>
+  <nav>
+    <button data-tab="dash" class="on">Dashboard</button>
+    <button data-tab="hold">Holdings</button>
+    <button data-tab="retire">Retirement</button>
+    <button data-tab="set">Settings</button>
+  </nav>
+</header>
+
+<main>
+  <!-- DASHBOARD -->
+  <section id="tab-dash">
+    <div class="card gold">
+      <div class="label">Total Portfolio Value</div>
+      <div class="big display gold-t" id="dTotal">$0</div>
+      <div class="hint" id="dPnl"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">Retirement Goal — $3M by 65</div>
+      <div class="bar"><div id="dBar" style="width:1%"></div></div>
+      <div class="hint" id="dBarTxt" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:6px">Top Holdings</div>
+      <div id="dTop"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">Watchlist</div>
+      <div id="dWatch"></div>
+      <div style="display:flex; gap:8px; margin-top:8px">
+        <input id="wTicker" placeholder="Add ticker (e.g. KO)" style="text-transform:uppercase" />
+        <button class="btn2" onclick="addWatch()">Add</button>
+      </div>
+    </div>
+    <div class="card" id="taxPeek" style="display:none">
+      <div class="label" style="margin-bottom:6px">From Your Tax App</div>
+      <div id="taxPeekBody" class="hint"></div>
+    </div>
+  </section>
+
+  <!-- HOLDINGS -->
+  <section id="tab-hold" style="display:none">
+    <div class="card">
+      <div class="label" style="margin-bottom:10px">Add a Holding</div>
+      <div class="grid2" style="margin-bottom:10px">
+        <input id="hTicker" placeholder="Ticker (AAPL)" style="text-transform:uppercase" />
+        <input id="hShares" placeholder="Shares" type="number" inputmode="decimal" />
+      </div>
+      <div class="grid2" style="margin-bottom:10px">
+        <input id="hCost" placeholder="Price you paid $" type="number" inputmode="decimal" />
+        <input id="hNow" placeholder="Price now $ (optional)" type="number" inputmode="decimal" />
+      </div>
+      <button class="btn" onclick="addHolding()">Add Holding</button>
+    </div>
+    <div class="card"><div class="label" style="margin-bottom:6px">Your Holdings</div><div id="hList"></div></div>
+    <p class="hint">Tip: tap a holding's price to update it. Ask the AI button to review any of them.</p>
+  </section>
+
+  <!-- RETIREMENT -->
+  <section id="tab-retire" style="display:none">
+    <div class="card">
+      <div class="label" style="margin-bottom:10px">Your Numbers</div>
+      <div class="grid2" style="margin-bottom:10px">
+        <div><div class="hint">Age now</div><input id="rAge" type="number" inputmode="numeric" value="35" /></div>
+        <div><div class="hint">Retire at</div><input id="rTarget" type="number" inputmode="numeric" value="65" /></div>
+      </div>
+      <div class="grid2" style="margin-bottom:10px">
+        <div><div class="hint">Saved so far $</div><input id="rSaved" type="number" inputmode="decimal" value="50000" /></div>
+        <div><div class="hint">Adding monthly $</div><input id="rMonthly" type="number" inputmode="decimal" value="2000" /></div>
+      </div>
+      <div style="margin-bottom:12px"><div class="hint">Yearly income you want in retirement $</div><input id="rIncome" type="number" inputmode="decimal" value="120000" /></div>
+      <button class="btn" onclick="runRetire()">Run 500 Market Simulations</button>
+    </div>
+    <div class="card" id="rOut" style="display:none">
+      <div class="label" style="margin-bottom:8px">What the Simulations Say</div>
+      <div id="rBody"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="tab-set" style="display:none">
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">AI Key (shared with Deal Scout &amp; Tax app)</div>
+      <p class="hint" style="margin-bottom:10px">One free Google Gemini key powers the AI in all your apps on this phone. Get it at <b>aistudio.google.com/apikey</b> — no credit card.</p>
+      <input id="sKey" placeholder="Paste Gemini API key" />
+      <button class="btn" style="margin-top:10px" onclick="saveKey()">Save Key On This Device</button>
+      <div class="hint" id="sKeyState" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">Backup — Never Lose Your Info</div>
+      <p class="hint" style="margin-bottom:10px">Your data lives on this device and is never wiped by updates. For extra safety, download a backup file anytime, or restore one.</p>
+      <div class="grid2">
+        <button class="btn2" onclick="exportData()">Download Backup</button>
+        <button class="btn3" onclick="document.getElementById('sImport').click()">Restore Backup</button>
+      </div>
+      <input type="file" id="sImport" accept=".json" style="display:none" onchange="importData(event)" />
+    </div>
+  </section>
+</main>
+
+<button id="aiFab" onclick="openAI()">AI</button>
+
+<div id="aiSheet">
+  <div id="aiHead">
+    <span class="display" style="font-size:24px"><span class="gold-t">WEALTH</span> AI</span>
+    <button class="btn3" onclick="closeAI()">Close ✕</button>
+  </div>
+  <div id="aiMsgs"></div>
+  <div id="aiBar">
+    <div id="aiChips">
+      <button onclick="quickAsk('Review my holdings and tell me KEEP, ADD, TRIM, or SELL for each — in plain language.')">Review my holdings</button>
+      <button onclick="quickAsk('Am I on track for retirement? Give it to me straight with one number to focus on.')">Retirement check</button>
+      <button onclick="quickAsk('What is the single smartest money move I should make this week?')">Next smart move</button>
+      <button onclick="quickAsk('Look at my watchlist and tell me which one deserves my next dollar and why.')">Watchlist pick</button>
+    </div>
+    <div id="aiRow">
+      <input id="aiIn" placeholder="Ask about your money…" onkeydown="if(event.key==='Enter')sendAI()" />
+      <button id="aiSend" onclick="sendAI()">→</button>
+    </div>
+  </div>
+</div>
+
+<div class="footnote">Personal research tool — not licensed financial advice. Verify big moves with a fiduciary.<br/>All data stays on this device. KWelchVisuals · Fairfield, CA</div>
+
+<script>
+/* ---------- storage (never wiped by app updates) ---------- */
+const WKEY = "kwa_data_v1";
+const GEMKEY = "kds_gemini_key"; // shared with Deal Scout + Tax app (same site)
+const seed = {
+  holdings: [
+    { id:"h1", ticker:"AAPL",  shares:15, cost:178.20, now:178.20 },
+    { id:"h2", ticker:"NVDA",  shares:6,  cost:820.50, now:820.50 },
+    { id:"h3", ticker:"BRK.B", shares:10, cost:358.00, now:358.00 },
+    { id:"h4", ticker:"MSFT",  shares:8,  cost:415.30, now:415.30 },
+    { id:"h5", ticker:"TSLA",  shares:5,  cost:245.00, now:245.00 },
+  ],
+  watchlist: ["PLTR","OXY","KO","AMD","RTX","IYR"],
+  chat: [{ role:"a", text:"KWELCH WEALTH AGENT online. I can see your holdings, your watchlist, and (if you use the Tax app) your business money too. Tap a quick question below or ask me anything." }],
+};
+let D;
+try { D = JSON.parse(localStorage.getItem(WKEY)) || null; } catch { D = null; }
+if (!D || !Array.isArray(D.holdings)) { D = seed; save(); }
+function save(){ localStorage.setItem(WKEY, JSON.stringify(D)); }
+function fmt(n){ return (n<0?"-$":"$") + Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:0}); }
+function fmt2(n){ return "$" + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+/* one-tap key install: ?key=XYZ saves the shared AI key then cleans the URL */
+(function(){ try{ const p=new URLSearchParams(location.search); const k=p.get("key");
+  if(k&&k.trim()){ localStorage.setItem(GEMKEY,k.trim()); p.delete("key");
+  history.replaceState(null,"",location.pathname+(p.toString()?"?"+p:"")+location.hash);} }catch{} })();
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  ["dash","hold","retire","set"].forEach(t=>document.getElementById("tab-"+t).style.display = (t===b.dataset.tab?"":"none"));
+});
+
+/* ---------- render ---------- */
+function totals(){
+  let value=0, cost=0;
+  D.holdings.forEach(h=>{ value += h.shares*(h.now||h.cost); cost += h.shares*h.cost; });
+  return { value, cost, pnl:value-cost };
+}
+function render(){
+  const t = totals();
+  dTotal.textContent = fmt(t.value);
+  dPnl.innerHTML = t.pnl===0 ? "Update current prices in Holdings to see gains/losses."
+    : `<span class="${t.pnl>=0?"up":"down"}">${t.pnl>=0?"▲":"▼"} ${fmt(Math.abs(t.pnl))} ${t.pnl>=0?"gain":"loss"} overall</span>`;
+  const pct = Math.max(1, Math.min(100, t.value/3000000*100));
+  dBar.style.width = pct+"%";
+  dBarTxt.textContent = pct.toFixed(1)+"% of the way. Every dollar in early counts double later.";
+  dTop.innerHTML = D.holdings.slice().sort((a,b)=>b.shares*(b.now||b.cost)-a.shares*(a.now||a.cost)).slice(0,4)
+    .map(h=>{ const v=h.shares*(h.now||h.cost), p=(h.now||h.cost)-h.cost, pp=h.cost?p/h.cost*100:0;
+      return `<div class="row"><b>${h.ticker}</b><span>${fmt(v)}</span><span class="${p>=0?"up":"down"}">${p>=0?"+":""}${pp.toFixed(1)}%</span></div>`; }).join("")
+    || `<div class="hint">No holdings yet — add one in the Holdings tab.</div>`;
+  dWatch.innerHTML = D.watchlist.map(w=>`<span class="chip" onclick="quickAskOpen('Give me your quick take on ${w} — buy, wait, or skip?')">${w} ✦</span>`).join("")
+    || `<div class="hint">Nothing on the watchlist yet.</div>`;
+  hList.innerHTML = D.holdings.map(h=>{
+    const v=h.shares*(h.now||h.cost);
+    return `<div class="row"><div><b>${h.ticker}</b><div class="hint">${h.shares} shares · paid ${fmt2(h.cost)}</div></div>
+      <div style="text-align:right"><div onclick="editPrice('${h.id}')" style="text-decoration:underline dotted">${fmt2(h.now||h.cost)}</div><div class="hint">${fmt(v)}</div></div>
+      <button class="del" onclick="delHolding('${h.id}')">✕</button></div>`;
+  }).join("") || `<div class="hint">No holdings yet.</div>`;
+  renderTaxPeek();
+  const key = localStorage.getItem(GEMKEY)||"";
+  sKeyState.textContent = key ? "✓ AI key is saved on this device." : "No AI key yet — the AI button needs one.";
+}
+function renderTaxPeek(){
+  try {
+    const T = JSON.parse(localStorage.getItem("kta_data_v1"));
+    if (!T || !Array.isArray(T.txns) || !T.txns.length) { taxPeek.style.display="none"; return; }
+    const yr = new Date().getFullYear();
+    let inc=0, exp=0;
+    T.txns.forEach(x=>{ if((x.date||"").startsWith(yr)) { if(x.amount>0) inc+=x.amount; else exp+=-x.amount; } });
+    const setAside = Math.max(0,(inc-exp)) * ((T.settings?.setAsidePct||25)/100);
+    taxPeekBody.innerHTML = `This year so far: <b class="up">${fmt(inc)} in</b> · <b class="down">${fmt(exp)} out</b>.<br/>Suggested tax set-aside: <b class="gold-t">${fmt(setAside)}</b>. Open the <a href="../tax/" style="color:var(--gold)">Tax app</a> for details.`;
+    taxPeek.style.display="";
+  } catch { taxPeek.style.display="none"; }
+}
+
+/* ---------- holdings & watchlist ---------- */
+function addHolding(){
+  const t=hTicker.value.trim().toUpperCase(), s=parseFloat(hShares.value), c=parseFloat(hCost.value), n=parseFloat(hNow.value);
+  if(!t||!(s>0)||!(c>0)) { alert("Enter a ticker, shares, and the price you paid."); return; }
+  D.holdings.push({ id:"h"+Date.now(), ticker:t, shares:s, cost:c, now:(n>0?n:c) });
+  hTicker.value=hShares.value=hCost.value=hNow.value="";
+  save(); render();
+}
+function delHolding(id){ if(confirm("Remove this holding? (Your backup file keeps history.)")){ D.holdings=D.holdings.filter(h=>h.id!==id); save(); render(); } }
+function editPrice(id){ const h=D.holdings.find(x=>x.id===id); const v=prompt("Current price for "+h.ticker+" ($):", h.now||h.cost); const n=parseFloat(v); if(n>0){ h.now=n; save(); render(); } }
+function addWatch(){ const t=wTicker.value.trim().toUpperCase(); if(t&&!D.watchlist.includes(t)){ D.watchlist.push(t); wTicker.value=""; save(); render(); } }
+
+/* ---------- retirement (Monte Carlo lite) ---------- */
+function runRetire(){
+  const age=+rAge.value, target=+rTarget.value, saved=+rSaved.value, monthly=+rMonthly.value, income=+rIncome.value;
+  if(!(target>age)) { alert("Retirement age must be after your age now."); return; }
+  const years=target-age, N=500, finals=[];
+  for(let i=0;i<N;i++){ let b=saved;
+    for(let y=0;y<years;y++) for(let m=0;m<12;m++){
+      const u1=Math.random()||1e-9, u2=Math.random();
+      const z=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+      b = b*(1+0.07/12+(0.15/Math.sqrt(12))*z)+monthly;
+    } finals.push(b); }
+  finals.sort((a,b)=>a-b);
+  const low=finals[Math.floor(N*.1)], mid=finals[Math.floor(N*.5)], high=finals[Math.floor(N*.9)];
+  const okPct = finals.filter(v=>v*0.04>=income).length/N*100;
+  const verdict = okPct>=90?`<b class="up">You're on track.</b> Keep the ${fmt(monthly)}/month going and don't touch it.`
+    : okPct>=70?`<b style="color:var(--amber)">Close.</b> Bumping your monthly amount to about <b>${fmt(Math.ceil(monthly*90/Math.max(okPct,5)/100)*100)}</b> pushes you over 90%.`
+    : `<b class="down">Not yet.</b> To retire on ${fmt(income)}/yr, aim for roughly <b>${fmt(Math.ceil(monthly*90/Math.max(okPct,5)/100)*100)}</b> a month, or retire a few years later.`;
+  rBody.innerHTML = `
+    <div class="row"><span>If markets are rough</span><b>${fmt(low)}</b></div>
+    <div class="row"><span>Most likely</span><b class="gold-t">${fmt(mid)}</b></div>
+    <div class="row"><span>If markets are great</span><b>${fmt(high)}</b></div>
+    <div class="row"><span>Chance your ${fmt(income)}/yr works</span><b>${okPct.toFixed(0)}%</b></div>
+    <p class="hint" style="margin-top:10px">${verdict}</p>`;
+  rOut.style.display="";
+}
+
+/* ---------- backup ---------- */
+function exportData(){
+  const payload = { app:"kwelch-wealth", exported:new Date().toISOString(), data:D };
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
+  a.download="kwelch-wealth-backup.json"; a.click();
+}
+function importData(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const p=JSON.parse(r.result); if(p.data&&Array.isArray(p.data.holdings)){ D=p.data; save(); render(); alert("Backup restored ✓"); } else alert("That file doesn't look like a wealth backup."); }catch{ alert("Couldn't read that file."); } };
+  r.readAsText(f);
+}
+function saveKey(){ const k=sKey.value.trim(); if(k){ localStorage.setItem(GEMKEY,k); sKey.value=""; render(); alert("AI key saved ✓ — works in all your apps on this device."); } }
+
+/* ---------- AI (Gemini, key shared across apps) ---------- */
+function aiContext(){
+  const t=totals();
+  let tax="(Tax app not used yet)";
+  try { const T=JSON.parse(localStorage.getItem("kta_data_v1"));
+    if(T&&T.txns&&T.txns.length){ const yr=new Date().getFullYear(); let inc=0,exp=0;
+      T.txns.forEach(x=>{ if((x.date||"").startsWith(yr)){ if(x.amount>0) inc+=x.amount; else exp+=-x.amount; } });
+      tax=`Business this year: income ${fmt(inc)}, expenses ${fmt(exp)} (from his Tax app).`; } } catch {}
+  return `KEITH'S LIVE DATA (from his apps on this phone):
+Portfolio value: ${fmt(t.value)} (cost basis ${fmt(t.cost)}, P&L ${fmt(t.pnl)}).
+Holdings: ${D.holdings.map(h=>`${h.ticker} ${h.shares}sh @ paid ${fmt2(h.cost)} now ${fmt2(h.now||h.cost)}`).join("; ")||"none"}.
+Watchlist: ${D.watchlist.join(", ")||"none"}.
+${tax}`;
+}
+const SYSTEM = `You are KWELCH WEALTH AGENT, the personal money copilot for Keith Welch Jr. — founder of KWelchVisuals, a photo/video business in Fairfield, CA. He is 35, building toward retiring at 65 with $3M. He is smart but NOT a finance person: use plain, everyday language, short paragraphs, no jargon (or explain it in one clause). Be direct and specific like a trusted advisor. Think through four lenses when judging investments — durable moats & fair price (Buffett), unavoidable technology (Gates), bold asymmetric bets (Musk), real hard assets (Trump) — but keep the output conversational, not a framework dump. When it matters, end with ONE clear suggested action. Always close trade suggestions with: "Not licensed financial advice — double-check big moves with a fiduciary."`;
+function openAI(){ aiSheet.classList.add("open"); paintChat(); }
+function closeAI(){ aiSheet.classList.remove("open"); }
+function paintChat(){
+  aiMsgs.innerHTML = D.chat.map(m=>`<div class="m ${m.role}">${m.text.replace(/</g,"&lt;")}</div>`).join("");
+  aiMsgs.scrollTop = aiMsgs.scrollHeight;
+}
+function quickAsk(q){ aiIn.value=q; sendAI(); }
+function quickAskOpen(q){ openAI(); quickAsk(q); }
+async function sendAI(){
+  const q=aiIn.value.trim(); if(!q) return;
+  const key=localStorage.getItem(GEMKEY)||"";
+  aiIn.value="";
+  D.chat.push({role:"u",text:q}); save(); paintChat();
+  if(!key){ D.chat.push({role:"a",text:"I need the free AI key first. Go to Settings in this app, or open Deal Scout where you already set it up — same key works everywhere on this phone."}); save(); paintChat(); return; }
+  D.chat.push({role:"a",text:"…thinking"}); paintChat();
+  try {
+    const history = D.chat.slice(0,-1).slice(-12).map(m=>({ role:m.role==="u"?"user":"model", parts:[{text:m.text}] }));
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,{
+      method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({ system_instruction:{parts:[{text:SYSTEM+"\n\n"+aiContext()}]}, contents:history, generationConfig:{maxOutputTokens:900,temperature:0.7} })
+    });
+    if(!res.ok) throw new Error(res.status===429?"The free AI is catching its breath — try again in a minute.":"AI error "+res.status);
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.map(p=>p.text).join("")||"(no answer — try again)";
+    D.chat[D.chat.length-1] = {role:"a",text}; save(); paintChat();
+  } catch(e){ D.chat[D.chat.length-1]={role:"a",text:"⚠️ "+(e.message||"Something went wrong. Check your connection and try again.")}; save(); paintChat(); }
+}
+
+render();
+</script>
+</body>
+</html>

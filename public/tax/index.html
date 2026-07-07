@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>KWelch Tax Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23000'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia' font-size='22' font-weight='bold' fill='%23D4AF37'%3ETX%3C/text%3E%3C/svg%3E" />
+<style>
+  :root { --gold:#D4AF37; --goldsoft:#E9CC73; --panel:#0c0c0c; --panel2:#141414; --line:#262626; --green:#27AE60; --red:#E74C3C; --amber:#F39C12; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body { background:#000; color:#fff; font-family:"Space Grotesk",system-ui,sans-serif; padding-bottom:110px; }
+  .display { font-family:"Bebas Neue",Impact,sans-serif; letter-spacing:.5px; }
+  header { position:sticky; top:0; z-index:20; background:rgba(0,0,0,.88); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:14px 16px 0; }
+  .brand { display:flex; align-items:baseline; gap:8px; }
+  .brand .g { color:var(--gold); font-size:30px; } .brand .w { color:#fff; font-size:30px; }
+  .applinks { font-size:11px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+  .applinks a { color:rgba(255,255,255,.55); text-decoration:none; } .applinks .here { color:var(--gold); }
+  nav { display:flex; gap:4px; overflow-x:auto; margin-top:10px; }
+  nav button { background:none; border:none; color:rgba(255,255,255,.5); font:600 14px "Space Grotesk"; padding:10px 14px; border-radius:10px 10px 0 0; white-space:nowrap; }
+  nav button.on { color:var(--gold); background:var(--panel); box-shadow:inset 0 -2px 0 0 var(--gold); }
+  main { max-width:720px; margin:0 auto; padding:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .card.gold { border-color:rgba(212,175,55,.45); box-shadow:0 0 0 1px rgba(212,175,55,.2), 0 10px 40px -12px rgba(212,175,55,.25); }
+  .label { font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:rgba(255,255,255,.45); }
+  .big { font-size:34px; } .gold-t { color:var(--gold); }
+  .row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .row:last-child { border-bottom:none; }
+  .up { color:var(--green); } .down { color:var(--red); }
+  button.btn { background:var(--gold); color:#000; border:none; border-radius:10px; padding:12px 16px; font:700 15px "Space Grotesk"; width:100%; }
+  button.btn2 { background:var(--panel2); color:var(--gold); border:1px solid rgba(212,175,55,.5); border-radius:10px; padding:11px 14px; font:600 14px "Space Grotesk"; }
+  button.btn3 { background:none; color:rgba(255,255,255,.55); border:1px solid var(--line); border-radius:10px; padding:9px 12px; font:600 13px "Space Grotesk"; }
+  input, select { background:var(--panel2); color:#fff; border:1px solid var(--line); border-radius:10px; padding:12px; font:500 15px "Space Grotesk"; width:100%; }
+  input:focus, select:focus { outline:none; border-color:rgba(212,175,55,.6); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .hint { font-size:12.5px; color:rgba(255,255,255,.45); line-height:1.5; }
+  .del { color:var(--red); background:none; border:none; font-size:18px; padding:6px; }
+  .cat { display:inline-block; font-size:11px; border:1px solid rgba(212,175,55,.4); color:var(--goldsoft); border-radius:999px; padding:2px 9px; }
+  .cat.p { border-color:var(--line); color:rgba(255,255,255,.45); }
+  details { background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-bottom:10px; }
+  details summary { padding:14px 16px; font-weight:600; cursor:pointer; list-style:none; }
+  details summary::after { content:"+"; float:right; color:var(--gold); }
+  details[open] summary::after { content:"–"; }
+  details .body { padding:0 16px 14px; font-size:14.5px; line-height:1.6; color:rgba(255,255,255,.75); }
+  #aiFab { position:fixed; right:18px; bottom:24px; z-index:40; width:64px; height:64px; border-radius:50%; border:none;
+    background:radial-gradient(circle at 30% 30%, var(--goldsoft), var(--gold)); color:#000; font:700 20px "Bebas Neue";
+    box-shadow:0 6px 24px rgba(212,175,55,.45); }
+  #aiSheet { position:fixed; inset:0; z-index:50; display:none; flex-direction:column; background:rgba(0,0,0,.96); }
+  #aiSheet.open { display:flex; }
+  #aiHead { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line); }
+  #aiMsgs { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .m { max-width:88%; padding:11px 14px; border-radius:14px; font-size:15px; line-height:1.5; white-space:pre-wrap; }
+  .m.u { align-self:flex-end; background:rgba(212,175,55,.16); border:1px solid rgba(212,175,55,.3); }
+  .m.a { align-self:flex-start; background:var(--panel); border:1px solid var(--line); }
+  #aiBar { padding:10px 12px calc(14px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); }
+  #aiChips { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; }
+  #aiChips button { white-space:nowrap; background:var(--panel2); border:1px solid var(--line); color:rgba(255,255,255,.65); border-radius:999px; padding:7px 12px; font-size:13px; }
+  #aiRow { display:flex; gap:8px; }
+  #aiIn { flex:1; }
+  #aiSend { background:var(--gold); border:none; border-radius:10px; width:52px; font:700 16px "Space Grotesk"; color:#000; }
+  .footnote { text-align:center; font-size:11px; color:rgba(255,255,255,.35); padding:16px; line-height:1.5; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand display"><span class="g">KWELCH</span><span class="w">TAX AGENT</span></div>
+  <div class="applinks">Apps: <a href="../">Deal Scout</a> · <a href="../wealth/">Wealth</a> · <span class="here">Tax</span></div>
+  <nav>
+    <button data-tab="dash" class="on">Dashboard</button>
+    <button data-tab="log">Money Log</button>
+    <button data-tab="learn">Plain English</button>
+    <button data-tab="set">Settings</button>
+  </nav>
+</header>
+
+<main>
+  <!-- DASHBOARD -->
+  <section id="tab-dash">
+    <div class="card gold">
+      <div class="label">Set Aside For Taxes (this year)</div>
+      <div class="big display gold-t" id="dAside">$0</div>
+      <div class="hint" id="dAsideTxt"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:6px">Next Tax Deadline</div>
+      <div style="font-size:22px" class="display" id="dDeadline"></div>
+      <div class="hint" id="dDeadlineTxt"></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="label">Money In (year)</div><div class="big display up" id="dIn">$0</div></div>
+      <div class="card"><div class="label">Money Out (year)</div><div class="big display down" id="dOut">$0</div></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:6px">Write-Offs Found So Far</div>
+      <div class="big display" id="dDeduct">$0</div>
+      <div class="hint">Business expenses lower the income you're taxed on. The AI finds them for you in the Money Log.</div>
+    </div>
+    <div class="card" id="wealthPeek" style="display:none">
+      <div class="label" style="margin-bottom:6px">From Your Wealth App</div>
+      <div class="hint" id="wealthPeekBody"></div>
+    </div>
+  </section>
+
+  <!-- MONEY LOG -->
+  <section id="tab-log" style="display:none">
+    <div class="card">
+      <div class="label" style="margin-bottom:10px">Bring In Your QuickBooks / Bank Activity</div>
+      <p class="hint" style="margin-bottom:10px">In QuickBooks (or your bank app): find <b>Export → CSV</b> for your transactions, then load that file here. I'll read it.</p>
+      <button class="btn2" style="width:100%" onclick="document.getElementById('csvFile').click()">Load CSV File</button>
+      <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none" onchange="importCsv(event)" />
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:10px">Or Add One By Hand</div>
+      <div class="grid2" style="margin-bottom:10px">
+        <input id="tDate" type="date" />
+        <input id="tAmt" type="number" inputmode="decimal" placeholder="Amount (−50 out, 500 in)" />
+      </div>
+      <input id="tDesc" placeholder="What was it? (e.g. Adobe subscription)" style="margin-bottom:10px" />
+      <button class="btn" onclick="addTxn()">Add It</button>
+    </div>
+    <div class="card gold" id="catCard" style="display:none">
+      <div class="label" style="margin-bottom:8px">AI Bookkeeper</div>
+      <p class="hint" style="margin-bottom:10px"><span id="catCount"></span> transactions need a tax category. The AI sorts them into proper tax categories (the same ones QuickBooks and tax forms use) and flags every write-off.</p>
+      <button class="btn" id="catBtn" onclick="aiCategorize()">AI: Categorize Everything</button>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+        <div class="label">Transactions (<span id="txCount">0</span>)</div>
+        <button class="btn3" onclick="exportCsv()">Export for QuickBooks / Taxes</button>
+      </div>
+      <div id="txList"></div>
+    </div>
+  </section>
+
+  <!-- PLAIN ENGLISH -->
+  <section id="tab-learn" style="display:none">
+    <p class="hint" style="margin-bottom:12px">Tax talk, translated. Tap any term. Ask the AI button for anything not covered here.</p>
+    <div id="gloss"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="tab-set" style="display:none">
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">How Much To Set Aside</div>
+      <p class="hint" style="margin-bottom:10px">Rule of thumb for self-employed in California: 25–30% of profit. Adjust if your tax person told you a different number.</p>
+      <input id="sPct" type="number" inputmode="numeric" min="0" max="60" />
+      <button class="btn" style="margin-top:10px" onclick="savePct()">Save Percentage</button>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">AI Key (shared with Deal Scout &amp; Wealth app)</div>
+      <p class="hint" style="margin-bottom:10px">One free Google Gemini key powers all your apps on this phone. Get it at <b>aistudio.google.com/apikey</b>.</p>
+      <input id="sKey" placeholder="Paste Gemini API key" />
+      <button class="btn" style="margin-top:10px" onclick="saveKey()">Save Key On This Device</button>
+      <div class="hint" id="sKeyState" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">Backup — Never Lose Your Info</div>
+      <p class="hint" style="margin-bottom:10px">Everything stays on this device and survives app updates. Download a backup anytime; restore it on any device.</p>
+      <div class="grid2">
+        <button class="btn2" onclick="exportData()">Download Backup</button>
+        <button class="btn3" onclick="document.getElementById('sImport').click()">Restore Backup</button>
+      </div>
+      <input type="file" id="sImport" accept=".json" style="display:none" onchange="importData(event)" />
+    </div>
+  </section>
+</main>
+
+<button id="aiFab" onclick="openAI()">AI</button>
+
+<div id="aiSheet">
+  <div id="aiHead">
+    <span class="display" style="font-size:24px"><span class="gold-t">TAX</span> AI</span>
+    <button class="btn3" onclick="closeAI()">Close ✕</button>
+  </div>
+  <div id="aiMsgs"></div>
+  <div id="aiBar">
+    <div id="aiChips">
+      <button onclick="quickAsk('Look at my money log and tell me every write-off I might be missing as a photographer/videographer.')">Find missed write-offs</button>
+      <button onclick="quickAsk('How much should I actually set aside for taxes this year based on my numbers? Plain answer.')">My tax number</button>
+      <button onclick="quickAsk('Explain quarterly estimated taxes like I have never done them, and tell me exactly what I owe attention to next.')">Quarterlies, simply</button>
+      <button onclick="quickAsk('Should someone like me be an LLC or S-Corp? Give me the plain-English tradeoff and a suggestion.')">LLC vs S-Corp</button>
+    </div>
+    <div id="aiRow">
+      <input id="aiIn" placeholder="Ask any tax question…" onkeydown="if(event.key==='Enter')sendAI()" />
+      <button id="aiSend" onclick="sendAI()">→</button>
+    </div>
+  </div>
+</div>
+
+<div class="footnote">Educational tool — not a CPA and not official tax advice. Confirm filings with a professional.<br/>All data stays on this device. KWelchVisuals · Fairfield, CA</div>
+
+<script>
+/* ---------- storage ---------- */
+const TKEY="kta_data_v1";
+const GEMKEY="kds_gemini_key"; // shared across all KWelch apps on this device
+let D;
+try { D=JSON.parse(localStorage.getItem(TKEY))||null; } catch { D=null; }
+if(!D||!Array.isArray(D.txns)) D={ txns:[], settings:{setAsidePct:25}, chat:[{role:"a",text:"KWELCH TAX AGENT here. Load your QuickBooks or bank CSV in the Money Log and I'll categorize everything and hunt for write-offs. Or just ask me any tax question in normal words."}] };
+save();
+function save(){ localStorage.setItem(TKEY,JSON.stringify(D)); }
+function fmt(n){ return (n<0?"-$":"$")+Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:0}); }
+
+/* one-tap key install (?key=) */
+(function(){ try{ const p=new URLSearchParams(location.search); const k=p.get("key");
+  if(k&&k.trim()){ localStorage.setItem(GEMKEY,k.trim()); p.delete("key");
+  history.replaceState(null,"",location.pathname+(p.toString()?"?"+p:"")+location.hash);} }catch{} })();
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  ["dash","log","learn","set"].forEach(t=>document.getElementById("tab-"+t).style.display=(t===b.dataset.tab?"":"none"));
+});
+
+/* ---------- tax categories (Schedule C friendly) ---------- */
+const CATS=["Income","Advertising & marketing","Car & mileage","Contract labor","Equipment & gear","Insurance","Legal & professional","Meals (business)","Office supplies","Phone & internet","Rent & studio","Software & subscriptions","Travel","Education & training","Bank & fees","Personal (not deductible)","Uncategorized"];
+const DEDUCTIBLE = new Set(CATS.filter(c=>!["Income","Personal (not deductible)","Uncategorized"].includes(c)));
+
+/* ---------- deadlines ---------- */
+function nextDeadline(){
+  const now=new Date(); const y=now.getFullYear();
+  const list=[[y,3,15,"Q1 estimated taxes"],[y,5,15,"Q2 estimated taxes"],[y,8,15,"Q3 estimated taxes"],[y+1,0,15,"Q4 estimated taxes"],[y+1,3,15,"Yearly tax filing"]];
+  for(const [yy,mm,dd,name] of list){ const d=new Date(yy,mm,dd); if(d>=now) return {d,name}; }
+  return {d:new Date(y+1,3,15),name:"Yearly tax filing"};
+}
+
+/* ---------- render ---------- */
+function yearTotals(){
+  const yr=String(new Date().getFullYear());
+  let inc=0,exp=0,ded=0;
+  D.txns.forEach(t=>{ if((t.date||"").startsWith(yr)){ if(t.amount>0) inc+=t.amount; else { exp+=-t.amount; if(DEDUCTIBLE.has(t.category)) ded+=-t.amount; } } });
+  return {inc,exp,ded,profit:Math.max(0,inc-exp)};
+}
+function render(){
+  const t=yearTotals();
+  const aside=t.profit*(D.settings.setAsidePct/100);
+  dAside.textContent=fmt(aside);
+  dAsideTxt.textContent=`That's ${D.settings.setAsidePct}% of your ${fmt(t.profit)} profit so far. Move it somewhere you won't touch it.`;
+  const nd=nextDeadline();
+  const days=Math.ceil((nd.d-new Date())/86400000);
+  dDeadline.textContent=nd.d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
+  dDeadlineTxt.textContent=`${nd.name} — ${days} days away. ${days<21?"Getting close — make sure the set-aside money is ready.":"You've got time. Keep logging as you go."}`;
+  dIn.textContent=fmt(t.inc); dOut.textContent=fmt(t.exp); dDeduct.textContent=fmt(t.ded);
+  const un=D.txns.filter(x=>!x.category||x.category==="Uncategorized").length;
+  catCard.style.display=un?"":"none"; catCount.textContent=un;
+  txCount.textContent=D.txns.length;
+  txList.innerHTML=D.txns.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).slice(0,120).map(x=>`
+    <div class="row">
+      <div style="min-width:0"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw">${(x.desc||"—").replace(/</g,"&lt;")}</div>
+        <div class="hint">${x.date||""} · <span class="cat ${DEDUCTIBLE.has(x.category)?"":"p"}">${x.category||"Uncategorized"}</span></div></div>
+      <b class="${x.amount>=0?"up":"down"}">${fmt(x.amount)}</b>
+      <button class="del" onclick="delTxn('${x.id}')">✕</button>
+    </div>`).join("")||`<div class="hint">Nothing here yet — load a CSV or add one by hand.</div>`;
+  renderWealthPeek();
+  sPct.value=D.settings.setAsidePct;
+  sKeyState.textContent=(localStorage.getItem(GEMKEY)||"")?"✓ AI key is saved on this device.":"No AI key yet — the AI button needs one.";
+}
+function renderWealthPeek(){
+  try { const W=JSON.parse(localStorage.getItem("kwa_data_v1"));
+    if(!W||!Array.isArray(W.holdings)||!W.holdings.length){ wealthPeek.style.display="none"; return; }
+    let v=0; W.holdings.forEach(h=>v+=h.shares*(h.now||h.cost));
+    wealthPeekBody.innerHTML=`Portfolio value: <b class="gold-t">${fmt(v)}</b> across ${W.holdings.length} holdings. Remember: selling winners can create taxes — ask me before you sell. <a href="../wealth/" style="color:var(--gold)">Open Wealth app →</a>`;
+    wealthPeek.style.display="";
+  } catch { wealthPeek.style.display="none"; }
+}
+
+/* ---------- transactions ---------- */
+function addTxn(){
+  const dt=tDate.value, a=parseFloat(tAmt.value), ds=tDesc.value.trim();
+  if(!dt||!ds||!Number.isFinite(a)||a===0){ alert("Fill in the date, amount, and what it was."); return; }
+  D.txns.push({id:"t"+Date.now()+Math.random().toString(36).slice(2,5),date:dt,desc:ds,amount:a,category:a>0?"Income":"Uncategorized"});
+  tAmt.value=tDesc.value=""; save(); render();
+}
+function delTxn(id){ D.txns=D.txns.filter(x=>x.id!==id); save(); render(); }
+
+/* CSV import — tolerant of QuickBooks/bank formats */
+function importCsv(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const rows=parseCsv(r.result);
+      if(rows.length<2) throw 0;
+      const head=rows[0].map(h=>h.toLowerCase());
+      const di=head.findIndex(h=>h.includes("date"));
+      const de=head.findIndex(h=>h.includes("desc")||h.includes("memo")||h.includes("name")||h.includes("payee"));
+      let ai=head.findIndex(h=>h.includes("amount"));
+      const cr=head.findIndex(h=>h.includes("credit")), db=head.findIndex(h=>h.includes("debit"));
+      let added=0;
+      for(let i=1;i<rows.length;i++){ const c=rows[i]; if(!c.length) continue;
+        let amt=NaN;
+        if(ai>=0) amt=parseFloat(String(c[ai]).replace(/[$,()]/g,m=>m==="("?"-":m===")"?"":""));
+        else if(cr>=0||db>=0){ const crv=parseFloat(String(c[cr]||"").replace(/[$,]/g,""))||0; const dbv=parseFloat(String(c[db]||"").replace(/[$,]/g,""))||0; amt=crv-dbv; }
+        if(!Number.isFinite(amt)||amt===0) continue;
+        const rawDate=di>=0?c[di]:""; const d=new Date(rawDate);
+        const iso=isNaN(d)?"":d.toISOString().slice(0,10);
+        const desc=(de>=0?c[de]:c.filter(x=>isNaN(parseFloat(x))).join(" "))||"(no description)";
+        const sig=iso+"|"+desc+"|"+amt;
+        if(D.txns.some(x=>x.sig===sig)) continue; // don't double-import
+        D.txns.push({id:"t"+Date.now()+i,sig,date:iso,desc,amount:amt,category:amt>0?"Income":"Uncategorized"});
+        added++;
+      }
+      save(); render();
+      alert(added?added+" transactions loaded ✓ — now tap “AI: Categorize Everything.”":"No new transactions found in that file (already loaded, or format not recognized).");
+    }catch{ alert("Couldn't read that CSV. Export it again from QuickBooks/your bank and retry."); }
+    ev.target.value="";
+  };
+  r.readAsText(f);
+}
+function parseCsv(text){
+  const rows=[]; let row=[],cur="",q=false;
+  for(let i=0;i<text.length;i++){ const ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else if(ch==='"') q=true;
+    else if(ch===","){ row.push(cur.trim()); cur=""; }
+    else if(ch==="\n"||ch==="\r"){ if(cur!==""||row.length){ row.push(cur.trim()); rows.push(row); row=[]; cur=""; } }
+    else cur+=ch; }
+  if(cur!==""||row.length){ row.push(cur.trim()); rows.push(row); }
+  return rows.filter(r=>r.some(c=>c!==""));
+}
+function exportCsv(){
+  const head="Date,Description,Amount,Category,Deductible";
+  const lines=D.txns.map(x=>[x.date,'"'+(x.desc||"").replace(/"/g,'""')+'"',x.amount,x.category||"Uncategorized",DEDUCTIBLE.has(x.category)?"Yes":"No"].join(","));
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([[head,...lines].join("\n")],{type:"text/csv"}));
+  a.download="kwelch-tax-"+new Date().getFullYear()+".csv"; a.click();
+}
+
+/* ---------- AI categorization ---------- */
+async function aiCategorize(){
+  const key=localStorage.getItem(GEMKEY)||"";
+  if(!key){ alert("Add the free AI key in Settings first (same key as Deal Scout)."); return; }
+  const un=D.txns.filter(x=>!x.category||x.category==="Uncategorized");
+  if(!un.length) return;
+  catBtn.disabled=true; catBtn.textContent="AI is sorting "+un.length+" transactions…";
+  try{
+    for(let i=0;i<un.length;i+=40){
+      const batch=un.slice(i,i+40);
+      const prompt=`Categorize these business/personal transactions for a self-employed photographer/videographer (KWelchVisuals, California). Allowed categories EXACTLY: ${CATS.join(" | ")}. Positive amounts are money in; negative are money out. Reply ONLY with a JSON array like [{"id":"...","category":"..."}] — one entry per transaction.\n\n${JSON.stringify(batch.map(x=>({id:x.id,desc:x.desc,amount:x.amount})))}`;
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:3000,temperature:0.1,responseMimeType:"application/json"}})});
+      if(!res.ok) throw new Error(res.status===429?"Free AI limit hit — wait a minute and tap again; it will continue where it left off.":"AI error "+res.status);
+      const data=await res.json();
+      const text=data?.candidates?.[0]?.content?.parts?.map(p=>p.text).join("")||"[]";
+      let out; try{ out=JSON.parse(text); }catch{ const m=text.match(/\[[\s\S]*\]/); out=m?JSON.parse(m[0]):[]; }
+      out.forEach(o=>{ const tx=D.txns.find(x=>x.id===o.id); if(tx&&CATS.includes(o.category)) tx.category=o.category; });
+      save(); render();
+    }
+    alert("Done ✓ — every transaction is categorized. Check the Write-Offs number on your Dashboard.");
+  }catch(e){ alert("⚠️ "+(e.message||"Something went wrong — tap the button again to continue.")); }
+  catBtn.disabled=false; catBtn.textContent="AI: Categorize Everything"; render();
+}
+
+/* ---------- plain-english glossary ---------- */
+const GLOSS=[
+["Quarterly estimated taxes","Because no employer takes taxes out of your checks, the IRS wants you to pay as you go — four times a year (roughly April, June, September, and January). You estimate what you owe and send it in. Miss them and you get charged a small penalty, like a late fee."],
+["Write-off (deduction)","A business expense that lowers the income you get taxed on. Camera gear, editing software, business miles, part of your phone bill — if it helps you earn, it usually counts. A $1,000 write-off doesn't save you $1,000; it saves you roughly $250–$300 in tax."],
+["1099","The form a company sends when they paid you $600+ as a freelancer. The IRS gets a copy too — so your books need to show at least that much income from them."],
+["Self-employment tax","On top of income tax, self-employed people pay about 15.3% extra for Social Security and Medicare (an employer normally covers half — you're both boss and employee, so you pay both halves). This is why setting aside 25–30% matters."],
+["LLC","A legal wrapper for your business. It protects your personal stuff (car, house, savings) if the business gets sued. By itself it does NOT change your taxes — it's protection, not a tax trick."],
+["S-Corp","A tax upgrade some businesses elect once profit is solid (often $60k+/yr). You pay yourself a salary and take the rest as distributions, which skip some self-employment tax. Saves real money at higher profit — but adds payroll paperwork, so the profit needs to justify it."],
+["Home office deduction","If part of your home is used regularly and ONLY for business (editing bay, studio corner), you can write off that share of rent/utilities. Simple method: $5 per square foot, up to 300 sq ft."],
+["Business miles","Every mile driven for shoots, scouting, or client meetings is worth about 70¢ off your taxable income. Track them — a 30-mile round trip to a shoot is ~$21 of write-off, every time."],
+["W-9","The form clients ask YOU to fill out so they can send you a 1099 later. It's just your name, address, and tax ID — normal and safe to provide to real clients."],
+["Estimated payment safe harbor","Pay at least 100% of last year's total tax (110% if you earned a lot) across your quarterlies, and the IRS won't penalize you — even if you actually owe more in April. It's the cheat code for not stressing the exact number."],
+];
+gloss.innerHTML=GLOSS.map(([t,b])=>`<details><summary>${t}</summary><div class="body">${b}</div></details>`).join("");
+
+/* ---------- backup ---------- */
+function exportData(){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({app:"kwelch-tax",exported:new Date().toISOString(),data:D},null,2)],{type:"application/json"}));
+  a.download="kwelch-tax-backup.json"; a.click();
+}
+function importData(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const p=JSON.parse(r.result); if(p.data&&Array.isArray(p.data.txns)){ D=p.data; save(); render(); alert("Backup restored ✓"); } else alert("That file doesn't look like a tax backup."); }catch{ alert("Couldn't read that file."); } };
+  r.readAsText(f);
+}
+function savePct(){ const v=parseInt(sPct.value); if(v>=0&&v<=60){ D.settings.setAsidePct=v; save(); render(); alert("Saved ✓"); } }
+function saveKey(){ const k=sKey.value.trim(); if(k){ localStorage.setItem(GEMKEY,k); sKey.value=""; render(); alert("AI key saved ✓ — works in all your apps on this device."); } }
+
+/* ---------- AI chat ---------- */
+function aiContext(){
+  const t=yearTotals();
+  let wealth="(Wealth app not used yet)";
+  try{ const W=JSON.parse(localStorage.getItem("kwa_data_v1"));
+    if(W&&W.holdings&&W.holdings.length){ let v=0; W.holdings.forEach(h=>v+=h.shares*(h.now||h.cost));
+      wealth=`Investment portfolio (from his Wealth app): ${fmt(v)} across ${W.holdings.map(h=>h.ticker).join(", ")}.`; } }catch{}
+  const cats={};
+  D.txns.forEach(x=>{ if(x.amount<0){ cats[x.category||"Uncategorized"]=(cats[x.category||"Uncategorized"]||0)+(-x.amount); } });
+  return `KEITH'S LIVE NUMBERS (from his apps on this phone):
+This year: money in ${fmt(t.inc)}, money out ${fmt(t.exp)}, profit ${fmt(t.profit)}, write-offs categorized so far ${fmt(t.ded)}.
+Spending by category: ${Object.entries(cats).map(([k,v])=>k+" "+fmt(v)).join("; ")||"none yet"}.
+Set-aside rate he uses: ${D.settings.setAsidePct}%.
+${wealth}`;
+}
+const SYSTEM=`You are KWELCH TAX AGENT — the plain-English tax copilot for Keith Welch Jr., a self-employed photographer/videographer (KWelchVisuals) in Fairfield, California. He currently pays a tax preparer $1,200/yr and wants to understand and handle more himself. RULES: Everyday language only — explain any tax term in one short clause the moment you use it. Short paragraphs. Be specific with his real numbers when they're in the context. Always end money questions with one clear next step. You are not a CPA: for anything about actually FILING or making an election (like S-Corp), tell him plainly and suggest he confirm that one item with a professional — the goal is fewer billable hours, not zero safety.`;
+function openAI(){ aiSheet.classList.add("open"); paintChat(); }
+function closeAI(){ aiSheet.classList.remove("open"); }
+function paintChat(){ aiMsgs.innerHTML=D.chat.map(m=>`<div class="m ${m.role}">${m.text.replace(/</g,"&lt;")}</div>`).join(""); aiMsgs.scrollTop=aiMsgs.scrollHeight; }
+function quickAsk(q){ aiIn.value=q; sendAI(); }
+async function sendAI(){
+  const q=aiIn.value.trim(); if(!q) return;
+  const key=localStorage.getItem(GEMKEY)||"";
+  aiIn.value="";
+  D.chat.push({role:"u",text:q}); save(); paintChat();
+  if(!key){ D.chat.push({role:"a",text:"I need the free AI key first — add it in Settings (it's the same key your Deal Scout uses, so if you set that up, just re-save it there and it works here too)."}); save(); paintChat(); return; }
+  D.chat.push({role:"a",text:"…thinking"}); paintChat();
+  try{
+    const history=D.chat.slice(0,-1).slice(-12).map(m=>({role:m.role==="u"?"user":"model",parts:[{text:m.text}]}));
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,{
+      method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({system_instruction:{parts:[{text:SYSTEM+"\n\n"+aiContext()}]},contents:history,generationConfig:{maxOutputTokens:900,temperature:0.6}})});
+    if(!res.ok) throw new Error(res.status===429?"The free AI is catching its breath — try again in a minute.":"AI error "+res.status);
+    const data=await res.json();
+    const text=data?.candidates?.[0]?.content?.parts?.map(p=>p.text).join("")||"(no answer — try again)";
+    D.chat[D.chat.length-1]={role:"a",text}; save(); paintChat();
+  }catch(e){ D.chat[D.chat.length-1]={role:"a",text:"⚠️ "+(e.message||"Something went wrong. Try again.")}; save(); paintChat(); }
+}
+
+render();
+</script>
+</body>
+</html>
