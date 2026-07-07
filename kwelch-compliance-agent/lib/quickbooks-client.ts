@@ -49,12 +49,22 @@ export async function syncQuickBooks(force = false): Promise<QBSnapshot> {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY is not set — add it to .env.local');
+  if (!apiKey) {
+    throw new Error(
+      'ANTHROPIC_API_KEY is not set. Add it to .env.local (console.anthropic.com → API Keys) and restart. ' +
+        'Until then, use "Enter manually" to load YTD figures — tax analysis works without any keys.',
+    );
+  }
+  const qbToken = process.env.QB_MCP_ACCESS_TOKEN;
+  if (!qbToken) {
+    throw new Error(
+      'QB_MCP_ACCESS_TOKEN is not set. Authorize QuickBooks with Intuit and add the token to .env.local. ' +
+        'Until then, use "Enter manually" to load YTD figures — tax analysis works without it.',
+    );
+  }
 
   const client = new Anthropic({ apiKey });
   const year = new Date().getFullYear();
-
-  const qbToken = process.env.QB_MCP_ACCESS_TOKEN;
   const response = await client.beta.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4096,
@@ -64,7 +74,7 @@ export async function syncQuickBooks(force = false): Promise<QBSnapshot> {
         type: 'url',
         url: QB_MCP_URL,
         name: 'quickbooks',
-        ...(qbToken ? { authorization_token: qbToken } : {}),
+        authorization_token: qbToken,
       },
     ],
     tools: [{ type: 'mcp_toolset', mcp_server_name: 'quickbooks' }],

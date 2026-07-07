@@ -2,7 +2,7 @@
 // Uses QB net profit by default; accepts an override { netIncome, taxYear }.
 import { getDb } from '@/lib/db';
 import { getLatestSnapshot } from '@/lib/quickbooks-client';
-import { calculateTaxes, sepIraLimit } from '@/lib/tax-engine';
+import { calculateTaxes, sepIraLimit, annualizeYtd } from '@/lib/tax-engine';
 import type { TaxEstimate } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -34,12 +34,7 @@ export async function POST(request: Request) {
   let annualized = netIncome;
   let annualizationNote: string | null = null;
   if (body.netIncome === undefined && snapshot) {
-    const now = new Date();
-    const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / 86400_000) + 1;
-    if (dayOfYear > 45 && dayOfYear < 350) {
-      annualized = Math.round((netIncome / dayOfYear) * 365);
-      annualizationNote = `Annualized from $${netIncome.toLocaleString()} YTD (day ${dayOfYear} of the year).`;
-    }
+    ({ annualized, note: annualizationNote } = annualizeYtd(netIncome));
   }
 
   const breakdown = calculateTaxes({ taxYear, netBusinessIncome: annualized });

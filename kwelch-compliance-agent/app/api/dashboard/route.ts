@@ -2,7 +2,7 @@
 import { getDb, getDeadlines, addAlert } from '@/lib/db';
 import { computeComplianceScore } from '@/lib/compliance-calendar';
 import { getLatestSnapshot } from '@/lib/quickbooks-client';
-import { calculateTaxes } from '@/lib/tax-engine';
+import { calculateTaxes, annualizeYtd } from '@/lib/tax-engine';
 import type { Alert, Deadline } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -30,7 +30,10 @@ export async function GET() {
     .all() as Alert[];
 
   const taxes = snapshot && snapshot.net_profit > 0
-    ? calculateTaxes({ taxYear: new Date().getFullYear(), netBusinessIncome: snapshot.net_profit })
+    ? calculateTaxes({
+        taxYear: new Date().getFullYear(),
+        netBusinessIncome: annualizeYtd(snapshot.net_profit).annualized,
+      })
     : null;
 
   return Response.json({

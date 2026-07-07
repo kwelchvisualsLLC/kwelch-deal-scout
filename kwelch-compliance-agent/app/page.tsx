@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { StatCard } from '@/components/ui/StatCard';
 import { ScoreRing } from '@/components/ScoreRing';
+import { SetupChecklist } from '@/components/SetupChecklist';
 import { formatCurrency, formatDate, dueLabel } from '@/lib/utils';
 import type { Alert, ComplianceScoreResult, Deadline, QBSnapshot } from '@/types';
 
@@ -64,6 +65,8 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <SetupChecklist />
+
       {/* Top row: score ring + QB stats */}
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="flex flex-col items-center justify-center gap-4 py-8">

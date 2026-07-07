@@ -174,6 +174,21 @@ export function calculateTaxes(input: TaxInput): TaxBreakdown {
   };
 }
 
+/**
+ * Annualize a partial-year YTD figure by day-of-year. Returns the input
+ * unchanged near the start or end of the year (too little signal / already
+ * nearly full-year).
+ */
+export function annualizeYtd(ytdNet: number, now = new Date()): { annualized: number; note: string | null } {
+  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / 86400_000) + 1;
+  if (dayOfYear <= 45 || dayOfYear >= 350) return { annualized: ytdNet, note: null };
+  const annualized = Math.round((ytdNet / dayOfYear) * 365);
+  return {
+    annualized,
+    note: `Annualized from $${ytdNet.toLocaleString()} YTD (day ${dayOfYear} of the year).`,
+  };
+}
+
 /** SEP-IRA contribution limit: 25% of net SE income after SE deduction, capped. */
 export function sepIraLimit(netBusinessIncome: number): number {
   const seBase = netBusinessIncome * SE_TAX_FACTOR;

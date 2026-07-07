@@ -1,10 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { RefreshCw, ScanSearch, Receipt } from 'lucide-react';
+import { RefreshCw, ScanSearch, Receipt, PencilLine } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge, statusTone } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Input, Label } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
 import { StatCard } from '@/components/ui/StatCard';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -16,6 +17,9 @@ export default function QuickBooksPage() {
   const [syncing, setSyncing] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showManual, setShowManual] = useState(false);
+  const [manual, setManual] = useState({ gross_revenue: '', total_expenses: '', unpaid_invoices_total: '', unpaid_invoices_count: '' });
+  const [savingManual, setSavingManual] = useState(false);
 
   const load = useCallback(() => {
     fetch('/api/quickbooks/sync').then((r) => r.json()).then((d) => setSnapshot(d.snapshot));
@@ -53,6 +57,40 @@ export default function QuickBooksPage() {
     }
   }
 
+  async function saveManual(e: React.FormEvent) {
+    e.preventDefault();
+    setSavingManual(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/quickbooks/manual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gross_revenue: Number(manual.gross_revenue),
+          total_expenses: Number(manual.total_expenses),
+          unpaid_invoices_total: manual.unpaid_invoices_total ? Number(manual.unpaid_invoices_total) : 0,
+          unpaid_invoices_count: manual.unpaid_invoices_count ? Number(manual.unpaid_invoices_count) : 0,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Save failed');
+      setSnapshot(data.snapshot);
+      setShowManual(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Save failed');
+    } finally {
+      setSavingManual(false);
+    }
+  }
+
+  const isManualSnapshot = (() => {
+    try {
+      return snapshot?.raw_summary ? JSON.parse(snapshot.raw_summary).source === 'manual' : false;
+    } catch {
+      return false;
+    }
+  })();
+
   const deductionTotal = deductions.reduce((s, d) => s + d.estimated_amount, 0);
   const expenseDetail: { category: string; amount: number }[] = (() => {
     try {
@@ -67,13 +105,16 @@ export default function QuickBooksPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">
           {snapshot
-            ? `Last sync: ${formatDate(snapshot.sync_date.slice(0, 10))} · results cached 30 min`
-            : 'No sync yet. Connect and pull live P&L, AR aging, and cash flow.'}
+            ? `Last ${isManualSnapshot ? 'manual entry' : 'sync'}: ${formatDate(snapshot.sync_date.slice(0, 10))}${isManualSnapshot ? ' · replace with a live sync when authorized' : ' · results cached 30 min'}`
+            : 'No data yet. Sync live from QuickBooks — or enter YTD figures manually (no API keys needed).'}
         </p>
         <div className="flex gap-2">
           <Button onClick={sync} disabled={syncing}>
             {syncing ? <Spinner className="text-black" /> : <RefreshCw className="h-4 w-4" />}
             {syncing ? 'Syncing…' : 'Sync QuickBooks'}
+          </Button>
+          <Button variant="secondary" onClick={() => setShowManual((s) => !s)}>
+            <PencilLine className="h-4 w-4" /> Enter manually
           </Button>
           <Button variant="secondary" onClick={scan} disabled={scanning}>
             {scanning ? <Spinner /> : <ScanSearch className="h-4 w-4" />}
@@ -81,6 +122,42 @@ export default function QuickBooksPage() {
           </Button>
         </div>
       </div>
+
+      {showManual && (
+        <Card className="border-gold/30">
+          <CardHeader
+            title="Manual Financials"
+            subtitle="Zero-token fallback — unlocks tax analysis and dashboard stats until QuickBooks is authorized"
+          />
+          <form onSubmit={saveManual} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <div>
+              <Label>YTD gross revenue ($)</Label>
+              <Input required type="number" step="0.01" min="0" value={manual.gross_revenue}
+                onChange={(e) => setManual({ ...manual, gross_revenue: e.target.value })} />
+            </div>
+            <div>
+              <Label>YTD total expenses ($)</Label>
+              <Input required type="number" step="0.01" min="0" value={manual.total_expenses}
+                onChange={(e) => setManual({ ...manual, total_expenses: e.target.value })} />
+            </div>
+            <div>
+              <Label>Unpaid invoices ($)</Label>
+              <Input type="number" step="0.01" min="0" value={manual.unpaid_invoices_total}
+                onChange={(e) => setManual({ ...manual, unpaid_invoices_total: e.target.value })} />
+            </div>
+            <div>
+              <Label># open invoices</Label>
+              <Input type="number" min="0" value={manual.unpaid_invoices_count}
+                onChange={(e) => setManual({ ...manual, unpaid_invoices_count: e.target.value })} />
+            </div>
+            <div className="flex items-end">
+              <Button type="submit" disabled={savingManual}>
+                {savingManual ? <Spinner className="text-black" /> : 'Save financials'}
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
 
       {error && (
         <Card className="border-red/40 text-sm text-red">

@@ -22,7 +22,9 @@ On first run the SQLite database (`wealth.db`) is created and auto-seeded with t
 5. Federal 1040 + Schedule C — April 15
 6. CA Form 540 — April 15
 
-**Monday-morning flow:** open the app → `/settings` → enter your EIN (encrypted immediately) → `/quickbooks` → **Sync QuickBooks** → within a minute the dashboard shows your exact tax liability, next deadline, compliance score, and the refund tracker shows where government money may be waiting.
+**Monday-morning flow:** open the app → the dashboard shows a **Finish Setup** checklist → `/settings` → enter your EIN (encrypted immediately) → `/quickbooks` → **Sync QuickBooks** (or **Enter manually** — YTD revenue + expenses, zero API keys needed) → within a minute the dashboard shows your exact tax liability, next deadline, compliance score, and the refund tracker shows where government money may be waiting.
+
+**Works with zero tokens.** Without any API keys you still get: the full deadline calendar, compliance score, entity health, refund tracker, and — via manual YTD entry on `/quickbooks` — the complete federal + CA tax analysis and quarterly estimates (auto-annualized mid-year). `ANTHROPIC_API_KEY` unlocks the AI agent, deduction scanner, SOS live check, and QB sync; `QB_MCP_ACCESS_TOKEN` (issued by Intuit when you authorize QuickBooks) unlocks the live sync. The setup checklist (`/api/health`) tracks all of this and disappears when complete.
 
 ## Pages
 
