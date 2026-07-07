@@ -17,7 +17,7 @@ A private, full-stack AI wealth management dashboard built for Keith Welch Jr. I
 git clone <repo>
 cd kwelch-wealth-agent
 npm install
-cp .env.example .env.local
+npm run setup   # creates .env.local with ENCRYPTION_KEY pre-generated
 # fill in every key in .env.local (see below)
 npm run dev
 ```
