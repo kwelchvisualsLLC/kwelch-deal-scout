@@ -202,19 +202,19 @@ export default function TaxesPage() {
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={b.quarterly.map((q) => ({ name: q.label.split(' ')[0], Federal: q.federalAmount, CA: q.caAmount }))}>
-                    <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={{ stroke: '#1E1E1E' }} />
-                    <YAxis stroke="#9CA3AF" fontSize={11} tickLine={false} axisLine={{ stroke: '#1E1E1E' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+                    <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={{ stroke: '#262626' }} />
+                    <YAxis stroke="#9CA3AF" fontSize={11} tickLine={false} axisLine={{ stroke: '#262626' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                     <Tooltip
-                      contentStyle={{ background: '#141414', border: '1px solid #1E1E1E', borderRadius: 8, fontSize: 12 }}
-                      labelStyle={{ color: '#F5F5F5' }}
+                      contentStyle={{ background: '#141414', border: '1px solid #262626', borderRadius: 8, fontSize: 12 }}
+                      labelStyle={{ color: '#ffffff' }}
                       formatter={(value) => formatCurrency(Number(value))}
                     />
-                    <Bar dataKey="Federal" stackId="a" fill="#C9A84C" radius={[0, 0, 0, 0]}>
+                    <Bar dataKey="Federal" stackId="a" fill="#D4AF37" radius={[0, 0, 0, 0]}>
                       {b.quarterly.map((q) => (
                         <Cell key={q.quarter} fillOpacity={q.dueDate < today ? 0.35 : 1} />
                       ))}
                     </Bar>
-                    <Bar dataKey="CA" stackId="a" fill="#8a7334" radius={[4, 4, 0, 0]}>
+                    <Bar dataKey="CA" stackId="a" fill="#E9CC73" radius={[4, 4, 0, 0]}>
                       {b.quarterly.map((q) => (
                         <Cell key={q.quarter} fillOpacity={q.dueDate < today ? 0.35 : 1} />
                       ))}

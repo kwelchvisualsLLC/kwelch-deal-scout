@@ -1,21 +1,25 @@
 @import "tailwindcss";
 
+/* ── KWelchVisuals house theme (matches Deal Scout) ───────────────────────── */
 @theme {
-  --color-bg: #0A0A0A;
-  --color-card: #141414;
-  --color-input: #1A1A1A;
-  --color-border: #1E1E1E;
-  --color-gold: #C9A84C;
+  --color-bg: #000000;
+  --color-card: #0c0c0c;   /* panel */
+  --color-input: #141414;  /* panel2 */
+  --color-border: #262626; /* line */
+  --color-gold: #D4AF37;
+  --color-goldsoft: #E9CC73;
   --color-gold-dim: #8a7334;
-  --color-text: #F5F5F5;
-  --color-muted: #9CA3AF;
+  --color-text: #ffffff;
+  --color-muted: #9ca3af;
   --color-green: #27AE60;
   --color-red: #C0392B;
   --color-amber: #F39C12;
 
-  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
-  --font-body: var(--font-inter), "Inter", sans-serif;
+  --font-display: var(--font-bebas), "Bebas Neue", Impact, sans-serif;
+  --font-body: var(--font-space-grotesk), "Space Grotesk", Inter, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+
+  --shadow-gold: 0 0 0 1px rgba(212, 175, 55, 0.35), 0 10px 40px -12px rgba(212, 175, 55, 0.25);
 }
 
 html {
@@ -23,28 +27,46 @@ html {
 }
 
 body {
-  background-color: var(--color-bg);
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(212, 175, 55, 0.08), transparent 60%),
+    #000;
   color: var(--color-text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-}
-
 ::selection {
-  background: rgba(201, 168, 76, 0.35);
+  background: #d4af37;
+  color: #000;
 }
 
-/* Slim scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.25);
+  border-radius: 20px;
+}
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a2a2a transparent;
+  scrollbar-color: rgba(212, 175, 55, 0.25) transparent;
 }
-*::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
-*::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+
+/* Card with the signature gold left accent stripe */
+.kw-card {
+  position: relative;
+  overflow: hidden;
+}
+.kw-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: rgba(212, 175, 55, 0.7);
+}
 
 @keyframes pulse-gold {
   0%, 100% { opacity: 1; }

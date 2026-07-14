@@ -6,8 +6,8 @@ export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInp
   return (
     <input
       className={cn(
-        'w-full rounded-lg border border-border bg-input px-3 py-2 text-sm text-text',
-        'placeholder:text-muted/60 focus:border-gold/60 focus:outline-none focus:ring-1 focus:ring-gold/40',
+        'w-full rounded-lg border border-border bg-input px-3.5 py-2.5 text-sm text-white outline-none transition',
+        'placeholder:text-white/30 focus:border-gold',
         className,
       )}
       {...props}
@@ -17,7 +17,10 @@ export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInp
 
 export function Label({ className, children, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
-    <label className={cn('mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted', className)} {...props}>
+    <label
+      className={cn('mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-white/50', className)}
+      {...props}
+    >
       {children}
     </label>
   );
@@ -27,8 +30,7 @@ export function Select({ className, children, ...props }: React.SelectHTMLAttrib
   return (
     <select
       className={cn(
-        'w-full rounded-lg border border-border bg-input px-3 py-2 text-sm text-text',
-        'focus:border-gold/60 focus:outline-none focus:ring-1 focus:ring-gold/40',
+        'w-full rounded-lg border border-border bg-input px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-gold',
         className,
       )}
       {...props}

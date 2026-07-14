@@ -134,7 +134,7 @@ export default function AgentPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-9.5rem)] flex-col">
+    <div className="flex h-[calc(100vh-11rem)] flex-col">
       {/* Header strip */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs text-muted">

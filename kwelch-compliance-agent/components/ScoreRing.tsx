@@ -17,7 +17,7 @@ export function ScoreRing({ score, size = 168 }: { score: number; size?: number 
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="#1E1E1E"
+          stroke="#262626"
           strokeWidth={stroke}
         />
         <circle
