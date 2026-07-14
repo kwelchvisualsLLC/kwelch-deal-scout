@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* ── KWelchVisuals house theme (matches Deal Scout) ───────────────────────── */
+@theme {
+  --color-bg: #000000;
+  --color-card: #0c0c0c;   /* panel */
+  --color-input: #141414;  /* panel2 */
+  --color-border: #262626; /* line */
+  --color-gold: #D4AF37;
+  --color-goldsoft: #E9CC73;
+  --color-gold-dim: #8a7334;
+  --color-text: #ffffff;
+  --color-muted: #9ca3af;
+  --color-green: #27AE60;
+  --color-red: #C0392B;
+  --color-amber: #F39C12;
+
+  --font-display: var(--font-bebas), "Bebas Neue", Impact, sans-serif;
+  --font-body: var(--font-space-grotesk), "Space Grotesk", Inter, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+
+  --shadow-gold: 0 0 0 1px rgba(212, 175, 55, 0.35), 0 10px 40px -12px rgba(212, 175, 55, 0.25);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(212, 175, 55, 0.08), transparent 60%),
+    #000;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #d4af37;
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.25);
+  border-radius: 20px;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.25) transparent;
+}
+
+/* Card with the signature gold left accent stripe */
+.kw-card {
+  position: relative;
+  overflow: hidden;
+}
+.kw-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: rgba(212, 175, 55, 0.7);
+}
+
+@keyframes pulse-gold {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.animate-pulse-gold { animation: pulse-gold 1.6s ease-in-out infinite; }
+
+/* Minimal markdown rendering inside chat bubbles */
+.chat-md p { margin: 0.5rem 0; }
+.chat-md ul, .chat-md ol { margin: 0.5rem 0 0.5rem 1.25rem; list-style: disc; }
+.chat-md ol { list-style: decimal; }
+.chat-md strong { color: var(--color-gold); font-weight: 600; }
+.chat-md code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-input);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.chat-md h1, .chat-md h2, .chat-md h3 {
+  color: var(--color-gold);
+  font-size: 0.95rem;
+  margin: 0.75rem 0 0.25rem;
+}
+.chat-md a { color: var(--color-gold); text-decoration: underline; }
+.chat-md table { border-collapse: collapse; margin: 0.5rem 0; width: 100%; font-size: 0.85em; }
+.chat-md th, .chat-md td { border: 1px solid var(--color-border); padding: 0.3rem 0.5rem; text-align: left; }
+.chat-md th { color: var(--color-gold); }
